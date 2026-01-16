@@ -566,7 +566,6 @@ const App: React.FC = () => {
 						</div>
 					</section>
 
-					{/* Project Grid */}
 					<Section id="work" title="Industrial Archives">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
 							{PROJECTS.map((p) => (
