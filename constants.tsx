@@ -1,251 +1,108 @@
-import {
-	Cloud,
-	Code2,
-	Cpu,
-	CreditCard,
-	Database,
-	Home,
-	Layers,
-	MapPin,
-	Monitor,
-	Rocket,
-	Search,
-	ShieldCheck,
-	Terminal,
-	Workflow,
-	Zap,
-	ZapIcon,
-} from "lucide-react";
-import { ExperienceItem, Project, SkillCategory } from "./types";
+import { Project, SkillGroup, Experience, Education } from './types';
 
 export const PROJECTS: Project[] = [
-	{
-		id: "housebuild",
-		title: "HouseBuild",
-		description:
-			"Optimized residential construction workflows through distributed state management and Edge-ready Next.js modules.",
-		longDescription:
-			"Engineered the core architecture for HouseBuild's project ecosystem, focusing on reducing data sync latency by 60%. Implemented an advanced technical SEO strategy using Next.js metadata API and dynamic routing, which drove a 40% increase in organic construction lead generation within the first quarter of deployment.",
-		stack: ["Next.js", "Redux", "Node.js", "PostgreSQL", "Tailwind CSS"],
-		metrics: [
-			{ label: "Organic Traffic", value: "+40% Growth" },
-			{ label: "Sync Latency", value: "-60% Reduction" },
-		],
-		architecture:
-			"Real-time synchronization architecture using WebSockets for live jobsite updates and distributed state.",
-		image:
-			"https://images.unsplash.com/photo-1503387762-592dee58c160?q=80&w=800&auto=format&fit=crop",
-	},
-	{
-		id: "energy-fix",
-		title: "EnergyFix",
-		description:
-			"Automated SEAI grant compliance workflows with server-side logic and aggressive performance tuning.",
-		longDescription:
-			"Pivoted the legacy frontend to a high-performance Next.js 14 environment. Streamlined technical audit pipelines using Server Actions and ISR (Incremental Static Regeneration), reducing application errors by 25% and achieving a Lighthouse performance score of 98+ across all regional landing pages for EnergyFix.ie.",
-		stack: ["Next.js", "Tailwind CSS", "Server Actions", "Redux", "Yup"],
-		metrics: [
-			{ label: "Lighthouse Score", value: "98/100" },
-			{ label: "Conversion Rate", value: "+15% Increase" },
-		],
-		architecture:
-			"Performant Next.js 14 architecture utilizing Server Actions for secure grant application processing and optimized image handling for project audits.",
-		image:
-			"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
-	},
-	{
-		id: "escape-plan",
-		title: "Escape Plan SaaS",
-		description:
-			"Scalable multi-tenant SaaS architecture for mission-critical visualization and automated invoicing.",
-		longDescription:
-			"Refactored the core rendering engine to support dynamic, high-resolution escape plans. Integrated a sophisticated Stripe billing layer and optimized client-side hydration patterns, resulting in a 30% reduction in TTI (Time to Interactive) and significant reductions in infrastructure overhead through modular component logic.",
-		stack: ["Next.js", "Styled Components", "Redux", "Stripe", "Formik"],
-		metrics: [
-			{ label: "TTI Optimization", value: "-30% Faster" },
-			{ label: "System Uptime", value: "99.9%" },
-		],
-		architecture:
-			"Modular micro-frontend approach with Next.js App Router and centralized state.",
-		image:
-			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
-	},
-	{
-		id: "geomedlink",
-		title: "GEOMEDLINK",
-		description:
-			"Real-time administrative dispatch system optimized for sub-second latency and zero-trust security.",
-		longDescription:
-			"Architected the Next.js administrative hub for a hybrid health-tracking ecosystem. Engineered optimized Firebase listeners and Edge-cached data fetching to ensure 100% uptime for mission-critical ambulance dispatching, while reducing administrative processing time by 40% through intuitive UI automation.",
-		stack: ["Next.js", "React Native", "Firebase", "FCM"],
-		metrics: [
-			{ label: "Admin Efficiency", value: "+40% Gain" },
-			{ label: "Dispatch Lag", value: "< 200ms" },
-		],
-		architecture:
-			"Event-driven architecture with a Next.js powered management console for dispatching.",
-		image:
-			"https://images.unsplash.com/photo-1587560699334-cc4ff634909a?q=80&w=800&auto=format&fit=crop",
-	},
-	{
-		id: "easypay",
-		title: "Student Easypay",
-		description:
-			"High-performance financial dashboarding with specialized data visualization and SSG optimizations.",
-		longDescription:
-			"Engineered a secure academic payment layer focusing on transactional integrity and SEO-friendly reporting. Leveraged Next.js Static Site Generation (SSG) to deliver instantaneous dashboard responses, increasing user retention by 22% and securing high-traffic payment peaks through aggressive server-side caching.",
-		stack: ["Next.js", "Axios", "Node.js", "Chart.js"],
-		metrics: [
-			{ label: "User Retention", value: "+22% Boost" },
-			{ label: "Page Load", value: "Instant (SSG)" },
-		],
-		architecture:
-			"Next.js static site generation (SSG) for static pages with dynamic hydration for dashboards.",
-		image:
-			"https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop",
-	},
+  {
+    id: 'geomedlink',
+    title: 'GeoMedLink',
+    category: 'HealthTech / Mobile',
+    description: 'A specialized social media platform for medical feeds and emergency orchestration. Built to bridge the gap between donors and patients in real-time.',
+    bullets: [
+      'Engineered a real-time blood donor locator using Firebase GeoFire, enabling instant matching between urgent needs and available donors.',
+      'Implemented high-precision live tracking for ambulances and medical assets, providing critical transparency during emergency transit.',
+      'Developed a curated social feed exclusively for health updates, utilizing real-time data sync to ensure information reliability.'
+    ],
+    tech: ['React Native', 'Firebase', 'Geolocation', 'Real-time DB']
+  },
+  {
+    id: 'housebuild',
+    title: 'HouseBuild',
+    category: 'PropTech / Industrial',
+    description: 'A performance-optimized PropTech ecosystem. Engineered for high-speed user interactions and search engine dominance.',
+    bullets: [
+      'Optimized React component tree and reconciliation logic, achieving a 35% reduction in Time to Interactive (TTI) for complex mortgage calculators.',
+      'Implemented advanced SEO strategies including JSON-LD schema markup and semantic structure, resulting in a 25% increase in organic search visibility.',
+      'Refactored Redux state slices into modular entities, reducing store boilerplate by 40% and improving cross-platform data consistency.'
+    ],
+    tech: ['React', 'Styled Components', 'Redux', 'Formik', 'Yup']
+  },
+  {
+    id: 'escape-plan',
+    title: 'Escape Plan',
+    category: 'SaaS / Industrial',
+    description: 'Industrial-grade digital twin manager. Focused on high-fidelity asset rendering and complex multi-role state orchestration.',
+    bullets: [
+      'Architected a high-performance building drawing viewer capable of rendering 50MB+ vector assets with 60fps smoothness during pan/zoom operations.',
+      'Developed a custom Redux middleware for role-based access control (RBAC), securing sensitive building blueprints across 4 distinct user tiers.',
+      'Integrated Stripe API with a robust webhook listener architecture, automating invoice generation and reducing billing cycle latency by 50%.'
+    ],
+    tech: ['React', 'Styled Components', 'Redux', 'Formik', 'Stripe']
+  },
+  {
+    id: 'energy-fix',
+    title: 'Energy Fix',
+    category: 'FinTech / Industrial',
+    description: 'A dynamic FinTech platform for SEAI grant processing. Engineered for 99.9% data integrity in multi-step financial applications.',
+    bullets: [
+      'Engineered a recursive dynamic form engine for SEAI compliance, reducing client-side validation overhead and decreasing application errors by 65%.',
+      'Achieved a 98/100 Lighthouse Performance score by implementing aggressive code-splitting and asset lazy-loading strategies.',
+      'Implemented persistent state-saving logic with Redux-Persist, improving user completion rates for long-form grant applications by 40%.'
+    ],
+    tech: ['React', 'Styled Components', 'Redux', 'Formik', 'Yup']
+  },
+  {
+    id: 'student-easypay',
+    title: 'Student Easypay',
+    category: 'EdTech / College',
+    description: 'A user-friendly interface for easy payment processing of college fees and related expenses.',
+    bullets: [
+      'Integrated payment solutions to handle various transactions securely and efficiently.',
+      'Implemented result analysis features to help students track and evaluate academic performance.',
+      'Collaborated with the design team to ensure the app is intuitive and accessible for academic tracking.'
+    ],
+    tech: ['React', 'Node.js', 'Payment Gateway', 'CSS']
+  }
 ];
 
-export const SKILL_CATEGORIES: SkillCategory[] = [
-	{
-		title: "Engine_Core",
-		skills: [
-			{
-				name: "Next.js",
-				status: "NATIVE",
-				utility: "Full_Stack_Frontend",
-				checksum: "0xNX_991",
-			},
-			{
-				name: "TypeScript",
-				status: "NATIVE",
-				utility: "Strict_Typing",
-				checksum: "0xTS_882",
-			},
-			{
-				name: "React",
-				status: "OPTIMIZED",
-				utility: "Virtual_DOM",
-				checksum: "0xRN_112",
-			},
-			{
-				name: "JavaScript",
-				status: "STABLE",
-				utility: "Runtime_Logic",
-				checksum: "0xJS_994",
-			},
-		],
-	},
-	{
-		title: "Runtime_Tools",
-		skills: [
-			{
-				name: "Redux",
-				status: "OPTIMIZED",
-				utility: "State_Sync",
-				checksum: "0xRX_332",
-			},
-			{
-				name: "Tailwind CSS",
-				status: "STABLE",
-				utility: "Utility_First",
-				checksum: "0xTW_905",
-			},
-			{
-				name: "Python",
-				status: "LATEST",
-				utility: "Automation",
-				checksum: "0xPY_741",
-			},
-			{
-				name: "Node.js",
-				status: "NATIVE",
-				utility: "Edge_Runtime",
-				checksum: "0xND_551",
-			},
-		],
-	},
+export const EXPERIENCE: Experience[] = [
+  {
+    company: 'Intosoft Pvt Ltd',
+    role: 'Junior Frontend Developer',
+    period: 'FEB, 2024 — PRESENT',
+    description: 'Leading frontend development for industrial SaaS and PropTech solutions. Focusing on complex form architectures, robust state orchestration, and high-fidelity UI implementation using Styled Components.'
+  },
+  {
+    company: 'Intosoft Pvt Ltd',
+    role: 'Frontend Developer Intern',
+    period: 'NOV, 2023 — FEB, 2024',
+    description: 'Assisted in building modular React components for home energy retrofit projects. Gained deep expertise in Formik validation schemas and collaborative agile development workflows.'
+  }
 ];
 
-export const SERVICES = [
-	{
-		title: "Next.js Architecture",
-		description:
-			"Building high-fidelity Next.js applications optimized for App Router, SSR/SSG patterns, and Core Web Vitals.",
-		icon: <Monitor className="w-6 h-6" />,
-	},
-	{
-		title: "Fullstack Engineering",
-		description:
-			"Developing end-to-end solutions combining the power of the Edge with modern Next.js environments.",
-		icon: <Rocket className="w-6 h-6" />,
-	},
-	{
-		title: "Performance Audits",
-		description:
-			"Deep dive into payload optimization, hydration strategies, and efficient server-side caching.",
-		icon: <Zap className="w-6 h-6" />,
-	},
-	{
-		title: "System Optimization",
-		description:
-			"Technical SEO and performance-first development using Next.js for enterprise-scale systems.",
-		icon: <Search className="w-6 h-6" />,
-	},
+export const EDUCATION: Education[] = [
+  {
+    institution: 'Lalitpur Engineering College',
+    degree: 'Bachelor of Computer Engineering',
+    period: '',
+    location: 'Chakupat, Patan, Lalitpur'
+  },
+  {
+    institution: 'Triton International College',
+    degree: 'High School',
+    period: '',
+    location: 'Subhidhanagar, Tinkune'
+  }
 ];
 
-export const EXPERIENCE: ExperienceItem[] = [
-	{
-		company: "Intosoft Pvt Ltd",
-		role: "Frontend Developer",
-		period: "Feb 2024 - Present",
-		highlights: [
-			"Leading Next.js development for industrial SaaS platforms, improving load times by 45%.",
-			"Architecting complex state machines with Redux and Next.js server actions.",
-			"Collaborated on high-security financial modules using Next.js API routes and Stripe.",
-		],
-		stack: ["Next.js", "TypeScript", "Redux", "Stripe"],
-	},
-	{
-		company: "Intosoft Pvt Ltd",
-		role: "Frontend Developer Intern",
-		period: "Nov 2023 - Feb 2024",
-		highlights: [
-			"Developed core UI components for home energy retrofit projects using Next.js.",
-			"Implemented server-side validation logic with Formik and Yup.",
-			"Optimized asset delivery and technical SEO for the major construction platform HouseBuild.",
-		],
-		stack: ["Next.js", "React", "Tailwind CSS", "Styled Components"],
-	},
+export const SKILLS: SkillGroup[] = [
+  { category: 'Languages', items: ['JavaScript', 'TypeScript', 'Python'] },
+  { category: 'Frameworks', items: ['React', 'Next.js', 'React Native'] },
+  { category: 'Libraries', items: ['Redux', 'Styled Components', 'Formik & Yup', 'Axios'] },
+  { category: 'Platforms', items: ['Visual Studio Code', 'Slack', 'Antigravity', 'Postman'] }
 ];
 
-export const EDUCATION = [
-	{
-		institution: "Lalitpur Engineering College",
-		degree: "Bachelor of Computer Engineering",
-		period: "2019 - 2024",
-		location: "Chakupat, Patan, Lalitpur",
-	},
-	{
-		institution: "Triton International College",
-		degree: "High School",
-		period: "2016 - 2019",
-		location: "Subhidhanagar, Tinkune",
-	},
+export const PROCESS = [
+  { step: '01', title: 'Industrial Dev', desc: 'Transforming complex business requirements into scalable frontend architectures.' },
+  { step: '02', title: 'State Logic', desc: 'Implementing robust Redux stores for consistent data across multi-role platforms.' },
+  { step: '03', title: 'Validation', desc: 'Crafting complex Yup schemas for industrial-grade data integrity.' },
+  { step: '04', title: 'Deployment', desc: 'Ensuring seamless delivery across high-stakes industrial applications.' }
 ];
-
-export const TECH_ICONS = {
-	Code2: <Code2 className="w-5 h-5" />,
-	Layers: <Layers className="w-5 h-5" />,
-	Terminal: <Terminal className="w-5 h-5" />,
-	Cpu: <Cpu className="w-5 h-5" />,
-	Database: <Database className="w-5 h-5" />,
-	Cloud: <Cloud className="w-5 h-5" />,
-	Zap: <Zap className="w-5 h-5" />,
-	Workflow: <Workflow className="w-5 h-5" />,
-	Shield: <ShieldCheck className="w-5 h-5" />,
-	ZapIcon: <ZapIcon className="w-5 h-5" />,
-	Home: <Home className="w-5 h-5" />,
-	CreditCard: <CreditCard className="w-5 h-5" />,
-	MapPin: <MapPin className="w-5 h-5" />,
-};

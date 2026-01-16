@@ -1,31 +1,29 @@
+
 export interface Project {
   id: string;
   title: string;
+  category: string;
   description: string;
-  longDescription: string;
-  stack: string[];
-  metrics: { label: string; value: string }[];
-  architecture: string;
-  image: string;
+  bullets: string[];
+  tech: string[];
   link?: string;
 }
 
-export interface Skill {
-  name: string;
-  status: 'STABLE' | 'OPTIMIZED' | 'NATIVE' | 'LATEST';
-  utility: string;
-  checksum: string;
+export interface SkillGroup {
+  category: string;
+  items: string[];
 }
 
-export interface SkillCategory {
-  title: string;
-  skills: Skill[];
-}
-
-export interface ExperienceItem {
+export interface Experience {
   company: string;
   role: string;
   period: string;
-  highlights: string[];
-  stack: string[];
+  description: string;
+}
+
+export interface Education {
+  institution: string;
+  degree: string;
+  period: string;
+  location: string;
 }

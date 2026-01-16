@@ -1,797 +1,604 @@
-import {
-	Activity,
-	ArrowUpRight,
-	Binary,
-	ChevronRight,
-	Cpu,
-	Filter,
-	Github,
-	Layers,
-	Linkedin,
-	Mail,
-	ShieldCheck,
-	XCircle,
-} from "lucide-react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import AITechnicalConsultant from "./components/AITechnicalConsultant";
-import ParticleBackground from "./components/ParticleBackground";
-import RevealOnScroll from "./components/RevealOnScroll";
-import TerminalIntro from "./components/TerminalIntro";
-import { EXPERIENCE, PROJECTS, SKILL_CATEGORIES } from "./constants";
 
-const MouseFollower: React.FC = () => {
-	// Maintaining 24 segments for a long trail, but with tighter spacing and smaller size
-	const [points, setPoints] = useState<{ x: number; y: number }[]>(
-		new Array(24).fill({ x: 0, y: 0 })
-	);
-	const [isPointer, setIsPointer] = useState(false);
-	const [active, setActive] = useState(false);
-	const mouseRef = useRef({ x: 0, y: 0 });
+import React, { useState, useEffect, useRef } from 'react';
+import Section from './components/Section';
+import WorkCard from './components/WorkCard';
+import { PROJECTS, PROCESS, EXPERIENCE, SKILLS, EDUCATION } from './constants';
 
-	useEffect(() => {
-		const handleMove = (e: MouseEvent) => {
-			mouseRef.current = { x: e.clientX, y: e.clientY };
-			if (!active) setActive(true);
+const SpaceBackground: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-			document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
-			document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-			const target = e.target as HTMLElement;
-			// Since default cursor is none, we detect interactive elements by tag name or role
-			const interactiveTags = ["A", "BUTTON", "INPUT", "TEXTAREA", "SELECT"];
-			const isInteractive =
-				interactiveTags.includes(target.tagName) ||
-				target.closest("button") ||
-				target.closest("a") ||
-				target.getAttribute("role") === "button";
+    let stars: { x: number; y: number; r: number; opacity: number; twinkle: number; speed: number }[] = [];
+    let comets: { x: number; y: number; vx: number; vy: number; length: number; opacity: number; hue: number }[] = [];
+    let satellites: { x: number; y: number; speed: number; size: number; blink: number; angle: number; depth: number }[] = [];
+    
+    const createRocket = () => {
+      const sides = ['top', 'bottom', 'left', 'right'];
+      const side = sides[Math.floor(Math.random() * sides.length)];
+      let x, y, angle;
+      const buffer = 100;
 
-			setIsPointer(!!isInteractive);
-		};
+      if (side === 'top') {
+        x = Math.random() * window.innerWidth;
+        y = -buffer;
+        angle = Math.PI / 2 + (Math.random() - 0.5);
+      } else if (side === 'bottom') {
+        x = Math.random() * window.innerWidth;
+        y = window.innerHeight + buffer;
+        angle = -Math.PI / 2 + (Math.random() - 0.5);
+      } else if (side === 'left') {
+        x = -buffer;
+        y = Math.random() * window.innerHeight;
+        angle = 0 + (Math.random() - 0.5);
+      } else {
+        x = window.innerWidth + buffer;
+        y = Math.random() * window.innerHeight;
+        angle = Math.PI + (Math.random() - 0.5);
+      }
 
-		const animate = () => {
-			setPoints((prevPoints) => {
-				const newPoints = [...prevPoints];
-				newPoints[0] = mouseRef.current;
+      return {
+        x,
+        y,
+        angle,
+        baseAngle: angle,
+        speed: 1.2,
+        time: Math.random() * 100,
+        curveFreq: 0.02,
+        curveAmp: 0.4,
+        isActive: true
+      };
+    };
 
-				// Increased interpolation factor (0.55) makes the tail track much faster
-				// while still preserving a slight elastic fluidity.
-				for (let i = 1; i < newPoints.length; i++) {
-					const dx = newPoints[i - 1].x - newPoints[i].x;
-					const dy = newPoints[i - 1].y - newPoints[i].y;
-					newPoints[i] = {
-						x: newPoints[i].x + dx * 0.55,
-						y: newPoints[i].y + dy * 0.55,
-					};
-				}
-				return newPoints;
-			});
-			requestAnimationFrame(animate);
-		};
+    let rocket = createRocket();
 
-		window.addEventListener("mousemove", handleMove);
-		const animationFrame = requestAnimationFrame(animate);
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initStars();
+      initSatellites();
+    };
 
-		return () => {
-			window.removeEventListener("mousemove", handleMove);
-			cancelAnimationFrame(animationFrame);
-		};
-	}, [active]);
+    const initStars = () => {
+      stars = [];
+      for (let i = 0; i < 350; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() < 0.1 ? Math.random() * 2 + 1.2 : Math.random() * 0.8 + 0.2,
+          opacity: Math.random(),
+          twinkle: Math.random() * 0.01 + 0.005,
+          speed: Math.random() * 0.03 + 0.01
+        });
+      }
+    };
 
-	if (!active) return null;
+    const initSatellites = () => {
+      satellites = [];
+      for (let i = 0; i < 15; i++) {
+        const depth = Math.random();
+        const size = 1 + depth * 5;
+        satellites.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          speed: 0.05 + depth * 0.25,
+          size: size,
+          blink: Math.random() * Math.PI * 2,
+          angle: (Math.random() - 0.5) * 0.3,
+          depth: depth
+        });
+      }
+      satellites.sort((a, b) => a.depth - b.depth);
+    };
 
-	return (
-		<>
-			<div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-				{points.map((point, i) => {
-					// Decreased radius: starting at 8px and tapering off
-					const baseSize = Math.max(0.5, 8 - i * 0.35);
-					const size = baseSize * (isPointer ? 1.5 : 1);
-					// Opacity fade remains smooth
-					const opacity = Math.max(0, 0.9 - i * 0.04);
-					// Tighter blur for a "faster" technical look
-					const blur = i * 0.4;
+    const drawRocket = (r: typeof rocket) => {
+      ctx.save();
+      ctx.translate(r.x, r.y);
+      ctx.rotate(r.angle + Math.PI / 2);
 
-					return (
-						<div
-							key={i}
-							className="fixed top-0 left-0 rounded-full bg-[#FFD700] shadow-[0_0_10px_rgba(255,215,0,0.5)]"
-							style={{
-								width: `${size}px`,
-								height: `${size}px`,
-								transform: `translate(${point.x - size / 2}px, ${
-									point.y - size / 2
-								}px)`,
-								opacity: opacity,
-								filter: `blur(${blur}px)`,
-								willChange: "transform, opacity",
-							}}
-						/>
-					);
-				})}
-			</div>
-			{/* Subtle area glow follows mouse fast */}
-			<div
-				className="fixed top-0 left-0 w-[400px] h-[400px] pointer-events-none z-[1] transition-transform duration-300 ease-out opacity-5 hidden lg:block rounded-full"
-				style={{
-					transform: `translate(${mouseRef.current.x - 200}px, ${
-						mouseRef.current.y - 200
-					}px)`,
-					background:
-						"radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 70%)",
-				}}
-			/>
-		</>
-	);
+      const firePulse = Math.sin(Date.now() * 0.1);
+      const fireSize = 15 + firePulse * 5;
+      const fireGrad = ctx.createLinearGradient(0, 10, 0, 10 + fireSize);
+      fireGrad.addColorStop(0, '#FF4D00');
+      fireGrad.addColorStop(0.4, '#FFD700');
+      fireGrad.addColorStop(1, 'transparent');
+      
+      ctx.beginPath();
+      ctx.fillStyle = fireGrad;
+      ctx.moveTo(-3, 10);
+      ctx.lineTo(0, 10 + fireSize);
+      ctx.lineTo(3, 10);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.moveTo(0, -20);
+      ctx.bezierCurveTo(7, -14, 7, 10, 5, 12);
+      ctx.lineTo(-5, 12);
+      ctx.bezierCurveTo(-7, 10, -7, -14, 0, -20);
+      ctx.fill();
+
+      ctx.fillStyle = '#EF4444';
+      ctx.beginPath();
+      ctx.moveTo(-6, 4);
+      ctx.lineTo(-12, 14);
+      ctx.lineTo(-5, 12);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(6, 4);
+      ctx.lineTo(12, 14);
+      ctx.lineTo(5, 12);
+      ctx.fill();
+
+      ctx.fillStyle = '#00F5FF';
+      ctx.beginPath();
+      ctx.arc(0, -6, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    };
+
+    const drawSatellite = (s: any) => {
+      ctx.save();
+      ctx.translate(s.x, s.y);
+      ctx.rotate(s.angle);
+      
+      const panelWidth = s.size * 4;
+      const panelHeight = s.size * 0.6;
+      const bodySize = s.size * 1.5;
+
+      ctx.fillStyle = `rgba(0, 245, 255, ${0.1 + s.depth * 0.2})`;
+      ctx.fillRect(-panelWidth / 2, -panelHeight / 2, panelWidth, panelHeight);
+      
+      ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + s.depth * 0.5})`;
+      ctx.fillRect(-bodySize / 2, -bodySize / 2, bodySize, bodySize);
+      
+      s.blink += 0.04;
+      if (Math.sin(s.blink) > 0.85) {
+        ctx.fillStyle = '#ff3333';
+        ctx.beginPath();
+        ctx.arc(0, 0, bodySize * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      ctx.restore();
+    };
+
+    const update = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      stars.forEach(s => {
+        s.opacity += s.twinkle;
+        if (s.opacity > 1 || s.opacity < 0.2) s.twinkle *= -1;
+        s.y -= s.speed;
+        if (s.y < 0) s.y = canvas.height;
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      satellites.forEach(s => {
+        s.x += s.speed;
+        s.y += s.speed * 0.15;
+        if (s.x > canvas.width + 100) s.x = -100;
+        if (s.x < -100) s.x = canvas.width + 100;
+        if (s.y > canvas.height + 100) s.y = -100;
+        if (s.y < -100) s.y = canvas.height + 100;
+        drawSatellite(s);
+      });
+
+      if (Math.random() < 0.005) {
+        comets.push({
+          x: Math.random() * canvas.width,
+          y: -100,
+          vx: (Math.random() - 0.5) * 12,
+          vy: Math.random() * 8 + 6,
+          length: Math.random() * 150 + 100,
+          opacity: 1,
+          hue: Math.random() > 0.5 ? 180 : 200
+        });
+      }
+      comets = comets.filter(c => {
+        c.x += c.vx;
+        c.y += c.vy;
+        c.opacity -= 0.01;
+        if (c.opacity <= 0) return false;
+        
+        ctx.strokeStyle = `hsla(${c.hue}, 100%, 70%, ${c.opacity})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y);
+        ctx.lineTo(c.x - c.vx * 5, c.y - c.vy * 5);
+        ctx.stroke();
+        return c.y < canvas.height + 150;
+      });
+
+      rocket.time += rocket.curveFreq;
+      rocket.angle = rocket.baseAngle + Math.sin(rocket.time) * rocket.curveAmp;
+      rocket.x += Math.cos(rocket.angle) * rocket.speed;
+      rocket.y += Math.sin(rocket.angle) * rocket.speed;
+
+      const limit = 200;
+      if (rocket.x < -limit || rocket.x > canvas.width + limit || rocket.y < -limit || rocket.y > canvas.height + limit) {
+        rocket = createRocket();
+      }
+
+      drawRocket(rocket);
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    update();
+    return () => window.removeEventListener('resize', resize);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-deep-space">
+      <div className="absolute inset-0 cyber-grid opacity-20" />
+      <canvas ref={canvasRef} className="absolute inset-0" />
+      <div className="absolute inset-0 bg-gradient-to-b from-pitch-black/20 via-transparent to-pitch-black/80" />
+    </div>
+  );
+};
+
+const HUDCursor: React.FC = () => {
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [targetPos, setTargetPos] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    const move = (e: MouseEvent) => {
+      setTargetPos({ x: e.clientX, y: e.clientY });
+    };
+    
+    const checkHover = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      setIsHovering(!!target.closest('a, button, .clickable, .group'));
+    };
+
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseover', checkHover);
+
+    let rafId: number;
+    const animate = () => {
+      setPos(prev => ({
+        x: prev.x + (targetPos.x - prev.x) * 0.2,
+        y: prev.y + (targetPos.y - prev.y) * 0.2
+      }));
+      rafId = requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseover', checkHover);
+      cancelAnimationFrame(rafId);
+    };
+  }, [targetPos]);
+
+  return (
+    <div 
+      className="fixed top-0 left-0 pointer-events-none z-[100] mix-blend-difference"
+      style={{ transform: `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)` }}
+    >
+      <div className={`relative flex items-center justify-center transition-all duration-300 ease-out ${isHovering ? 'scale-150' : 'scale-100'}`}>
+        {/* The Square Frame */}
+        <div className={`absolute w-5 h-5 border border-cyber-cyan/50 transition-all duration-300 ${isHovering ? 'border-cyber-cyan' : 'border-cyber-cyan/40'}`} />
+        
+        {/* The Center Dot */}
+        <div className="w-1 h-1 bg-cyber-cyan rounded-full shadow-[0_0_10px_#00F5FF]" />
+      </div>
+    </div>
+  );
+};
+
+const ExperienceNode: React.FC<{ exp: typeof EXPERIENCE[0], index: number, total: number }> = ({ exp, index, total }) => {
+  return (
+    <div className="relative flex items-start group mb-32 last:mb-0">
+      {/* Side Label (Period) */}
+      <div className="hidden lg:block absolute -left-64 top-0 w-48 text-right pr-8">
+        <div className="text-[10px] font-black text-neutral-800 uppercase tracking-[0.4em] group-hover:text-cyber-cyan transition-colors duration-500">
+          STAMP_{index.toString().padStart(2, '0')}
+        </div>
+        <div className="text-[12px] font-bold text-slate-500 group-hover:text-white transition-colors duration-500">
+          {exp.period}
+        </div>
+      </div>
+
+      {/* Center Tactical Path */}
+      <div className="flex flex-col items-center mr-16 md:mr-24 relative">
+        {/* Node Glyph */}
+        <div className="relative z-10 w-12 h-12 flex items-center justify-center">
+          <div className="absolute inset-0 border border-cyber-cyan/30 rotate-45 group-hover:rotate-180 transition-transform duration-1000 bg-pitch-black/80" />
+          <div className="absolute inset-2 bg-cyber-cyan/10 border border-cyber-cyan/20 group-hover:bg-cyber-cyan/40 transition-colors" />
+          <div className="relative text-[10px] font-black text-cyber-cyan group-hover:scale-110 transition-transform">
+            0{index + 1}
+          </div>
+          
+          {/* Active Ping */}
+          {index === 0 && (
+            <div className="absolute inset-0 border border-cyber-cyan rounded-lg animate-ping opacity-30 pointer-events-none" />
+          )}
+        </div>
+
+        {/* Path Line */}
+        {index < total - 1 && (
+          <div className="absolute top-12 bottom-[-128px] w-[1px] bg-gradient-to-b from-cyber-cyan/60 via-cyber-cyan/10 to-transparent" />
+        )}
+      </div>
+
+      {/* Content Block */}
+      <div className="flex-1 pb-12">
+        <div className="inline-flex items-center gap-4 mb-4">
+          <span className="text-[10px] font-mono text-cyber-cyan/40 font-bold tracking-widest">TYPE_ROLE</span>
+          <div className="h-[1px] w-8 bg-cyber-cyan/20" />
+        </div>
+        
+        <h3 className="text-3xl md:text-5xl font-heading font-black text-white tracking-tighter mb-4 group-hover:text-cyber-cyan transition-colors duration-700">
+          {exp.role}
+        </h3>
+        
+        <div className="flex flex-wrap items-center gap-6 mb-8">
+          <span className="text-slate-500 font-black text-[11px] uppercase tracking-[0.6em]">
+            {exp.company}
+          </span>
+          <span className="lg:hidden text-[10px] text-cyber-cyan/40 font-bold">{exp.period}</span>
+        </div>
+
+        <div className="relative max-w-2xl">
+          <div className="absolute -left-8 top-0 bottom-0 w-[1px] bg-white/5" />
+          <p className="text-slate-400 text-lg leading-relaxed font-light pl-8 group-hover:text-slate-200 transition-colors duration-700">
+            {exp.description}
+          </p>
+        </div>
+
+        {/* Tactical Sub-Labels */}
+        <div className="mt-10 flex gap-12 opacity-40 group-hover:opacity-100 transition-opacity duration-1000">
+          <div className="text-[8px] font-mono text-neutral-600">
+            LOC_LAT: 27.6710° N <br />
+            LOC_LNG: 85.3238° E
+          </div>
+          <div className="text-[8px] font-mono text-neutral-600">
+            PATH: ROOT/DEV/EXP_{index} <br />
+            STAT: ACTIVE_NODE
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const App: React.FC = () => {
-	const [activeSection, setActiveSection] = useState("hero");
-	const [introComplete, setIntroComplete] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-	const [activeFilter, setActiveFilter] = useState<string | null>(null);
-	const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2200);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
-	useEffect(() => {
-		if (!introComplete) return;
+  const scrollTo = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						setActiveSection(entry.target.id);
-					}
-				});
-			},
-			{ threshold: 0.3 }
-		);
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-pitch-black z-[100] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-6 relative">
+          <div className="w-48 h-[2px] bg-neutral-900 rounded-full overflow-hidden">
+            <div className="h-full bg-cyber-cyan w-full origin-left animate-[loading_2s_ease-in-out_infinite]" />
+          </div>
+          <div className="text-[10px] tracking-[1.2em] text-cyber-cyan animate-pulse font-extrabold uppercase">Initializing_System</div>
+        </div>
+        <style>{`@keyframes loading { 0% { transform: scaleX(0); } 50% { transform: scaleX(1); } 100% { transform: scaleX(0); transform-origin: right; } }`}</style>
+      </div>
+    );
+  }
 
-		document.querySelectorAll("section[id]").forEach((section) => {
-			observer.observe(section);
-		});
+  const navLinks = [
+    { name: 'Projects', id: 'work' },
+    { name: 'Experience', id: 'experience' },
+    { name: 'Education', id: 'education' },
+    { name: 'Skills', id: 'skills' },
+    { name: 'Contact', id: 'contact' },
+  ];
 
-		return () => observer.disconnect();
-	}, [introComplete]);
+  return (
+    <div className="min-h-screen relative bg-pitch-black font-body text-slate-400 overflow-x-hidden selection:bg-cyber-cyan selection:text-black">
+      <HUDCursor />
+      <SpaceBackground />
+      
+      <div className="animate-fade-in relative z-10">
+        <header className="fixed top-0 left-0 w-full z-50 px-10 md:px-24 flex items-center justify-between h-[70px] glass-morphism border-b border-white/10">
+          <div className="group/logo cursor-pointer flex items-center" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+            <div className="relative w-10 h-10 flex items-center justify-center">
+              {/* Animated HUD Frames */}
+              <div className="absolute inset-0 border-[0.5px] border-cyber-cyan/30 rounded-lg rotate-45 group-hover/logo:rotate-180 transition-transform duration-[1.5s] ease-in-out" />
+              <div className="absolute inset-1.5 border-[0.5px] border-cyber-cyan/10 rounded-sm -rotate-45 group-hover/logo:rotate-0 transition-transform duration-[1s] ease-in-out" />
+              
+              {/* Initial Gylph */}
+              <div className="relative z-10 flex items-baseline">
+                <span className="font-heading font-black text-cyber-cyan text-lg tracking-tighter">S</span>
+                <span className="font-heading font-black text-white text-lg tracking-tighter opacity-80">B</span>
+              </div>
+              
+              {/* Pulse Indicator */}
+              <div className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 glass-morphism rounded-full flex items-center justify-center border-cyber-cyan/20">
+                <div className="w-1 h-1 bg-cyber-cyan rounded-full animate-pulse shadow-[0_0_8px_#00F5FF]" />
+              </div>
+            </div>
+          </div>
 
-	const filteredProjects = useMemo(() => {
-		if (!activeFilter) return PROJECTS;
-		return PROJECTS.filter((p) => p.stack.includes(activeFilter));
-	}, [activeFilter]);
+          <nav className="hidden md:flex gap-10">
+            {navLinks.map((link) => (
+              <button 
+                key={link.id}
+                onClick={() => scrollTo(link.id)}
+                className="text-[9px] tracking-[0.4em] uppercase font-black text-slate-500 hover:text-cyber-cyan transition-all relative group"
+              >
+                {link.name}
+                <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-cyber-cyan transition-all group-hover:w-full"></span>
+              </button>
+            ))}
+          </nav>
+        </header>
 
-	if (!introComplete) {
-		return <TerminalIntro onComplete={() => setIntroComplete(true)} />;
-	}
+        <main>
+          {/* Hero Section */}
+          <section className="min-h-screen flex flex-col justify-center px-10 md:px-24 lg:px-44 relative">
+            <div className="max-w-6xl w-full">
+              <div className="inline-flex items-center gap-8 mb-10 text-cyber-cyan text-[11px] uppercase tracking-[1em] font-black animate-slide-up">
+                <span className="w-24 h-[1px] bg-cyber-cyan/30"></span>
+                Junior Frontend Developer
+              </div>
+              <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-12 text-white animate-slide-up [animation-delay:200ms]">
+                Building <br /> <span className="text-cyber-cyan">Resilient UIs.</span>
+              </h1>
+              <p className="text-lg md:text-xl font-light leading-relaxed max-w-2xl text-slate-400 animate-slide-up [animation-delay:400ms]">
+                I specialize in developing user-friendly interfaces for SaaS, PropTech, and FinTech ecosystems. Precise state management and high-fidelity interface design.
+              </p>
+              
+              <div className="mt-20 flex flex-wrap gap-8 animate-slide-up [animation-delay:600ms]">
+                {['REACT', 'REDUX', 'STYLED_COMPONENTS', 'FORMIK'].map(item => (
+                  <div key={item} className="px-10 py-4 glass-morphism rounded-full text-[10px] tracking-[0.4em] font-black text-cyber-cyan border-cyber-cyan/20 hover:border-cyber-cyan/60 transition-all hover:-translate-y-2">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
-	return (
-		<div className="min-h-screen relative text-slate-300 selection:bg-violet-900/40 animate-in fade-in duration-1000">
-			<style>{`
-        .violet-glow { filter: drop-shadow(0 0 8px rgba(76, 29, 149, 0.4)); }
-        .text-purple { color: #8b5cf6; text-shadow: 0 0 10px rgba(76, 29, 149, 0.3); }
-        .border-purple { border-color: rgba(76, 29, 149, 0.2); box-shadow: 0 0 15px rgba(76, 29, 149, 0.05); }
-        .grid-bg { background-size: 40px 40px; background-image: radial-gradient(circle, rgba(76, 29, 149, 0.05) 1px, transparent 1px); }
-        .skill-node:hover .skill-utility { opacity: 1; transform: translateY(0); }
-      `}</style>
+          {/* Project Grid */}
+          <Section id="work" title="Industrial Archives">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+              {PROJECTS.map(p => (
+                <div key={p.id} className="transform hover:-translate-y-4 transition-all duration-1000">
+                  <WorkCard project={p} />
+                </div>
+              ))}
+            </div>
+          </Section>
 
-			<ParticleBackground />
-			<MouseFollower />
-			<AITechnicalConsultant />
+          {/* Experience Section - Redesigned to Roadmap Style */}
+          <Section id="experience" title="Professional Path">
+            <div className="py-20 relative max-w-5xl mx-auto">
+              {EXPERIENCE.map((exp, i) => (
+                <ExperienceNode 
+                  key={i} 
+                  exp={exp} 
+                  index={i} 
+                  total={EXPERIENCE.length} 
+                />
+              ))}
+            </div>
+          </Section>
 
-			{/* Navigation */}
-			<nav className="fixed top-0 left-0 w-full z-50 h-20 flex items-center justify-between px-8 md:px-16 glass-card border-b border-violet-900/10">
-				<div
-					className="flex items-center gap-4 cursor-pointer"
-					onClick={() => window.scrollTo(0, 0)}
-				>
-					<div className="w-10 h-10 bg-violet-900 rounded-full flex items-center justify-center font-bold text-white text-xl shadow-[0_0_20px_rgba(76,29,149,0.4)] transition-transform hover:rotate-90 duration-500">
-						S
-					</div>
-					<div className="flex flex-col">
-						<span className="font-bold tracking-tight text-xl leading-none uppercase">
-							SUMAN<span className="text-violet-500">BASNET</span>
-						</span>
-						<span className="text-[9px] text-violet-700 tracking-[0.4em] uppercase mt-1 font-bold">
-							Status: Operational
-						</span>
-					</div>
-				</div>
-				<div className="hidden lg:flex items-center gap-10 text-[10px] uppercase tracking-[0.3em] text-slate-500">
-					{["projects", "stack", "experience", "contact"].map((item) => (
-						<a
-							key={item}
-							href={`#${item}`}
-							className={`hover:text-violet-500 transition-all duration-300 relative group ${
-								activeSection === item ? "text-violet-500 font-bold" : ""
-							}`}
-						>
-							<span className="opacity-30 mr-2 font-normal">
-								0
-								{["projects", "stack", "experience", "contact"].indexOf(item) +
-									1}
-							</span>
-							{item}
-							<span
-								className={`absolute -bottom-2 left-0 h-[1px] bg-violet-700 transition-all duration-300 ${
-									activeSection === item ? "w-full" : "w-0 group-hover:w-full"
-								}`}
-							/>
-						</a>
-					))}
-				</div>
-				<div className="flex items-center gap-4">
-					<a href="#" className="p-2 hover:text-violet-500 transition-all">
-						<Github className="w-5 h-5" />
-					</a>
-					<a href="#" className="p-2 hover:text-violet-500 transition-all">
-						<Linkedin className="w-5 h-5" />
-					</a>
-					<div className="h-6 w-[1px] bg-slate-800 mx-2 hidden sm:block" />
-					<button className="hidden sm:block text-[9px] uppercase tracking-widest glass-button px-4 py-2 rounded font-bold">
-						DOWNLOAD_MANIFEST.PDF
-					</button>
-				</div>
-			</nav>
+          {/* Education Section */}
+          <Section id="education" title="Academic Foundation">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 py-10">
+              {EDUCATION.map((edu, i) => (
+                <div key={i} className="p-10 glass-morphism rounded-[3rem] border-white/5 hover:border-cyber-cyan/20 transition-all group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-8 font-mono text-[8px] tracking-widest text-neutral-800 uppercase group-hover:text-cyber-cyan transition-colors">
+                    REF_{i === 0 ? 'LEC_01' : 'TIC_02'}
+                  </div>
+                  <div className="text-[11px] font-black text-cyber-cyan uppercase tracking-[0.5em] mb-6">
+                    {edu.period}
+                  </div>
+                  <h4 className="text-2xl text-white font-black mb-4 tracking-tight leading-none">
+                    {edu.institution}
+                  </h4>
+                  <div className="text-[13px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-8">
+                    {edu.degree}
+                  </div>
+                  <div className="flex items-center gap-3 text-[10px] text-slate-600 font-mono">
+                    <div className="w-2 h-2 rounded-full bg-cyber-cyan/20 group-hover:bg-cyber-cyan transition-colors" />
+                    {edu.location}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Section>
 
-			<main className="relative z-10">
-				{/* Hero Section */}
-				<section
-					id="hero"
-					className="min-h-screen flex flex-col justify-center px-8 md:px-16 lg:px-32 py-20 relative overflow-hidden bg-transparent"
-				>
-					<RevealOnScroll direction="left">
-						<div className="max-w-5xl space-y-10">
-							<div className="flex items-center gap-4">
-								<div className="px-4 py-1 rounded bg-violet-900/10 border border-violet-900/20 text-violet-500 text-[10px] uppercase tracking-[0.4em] font-bold">
-									Next.js Architect // v2.0.4
-								</div>
-								<div className="h-[1px] w-12 bg-violet-900/20" />
-								<div className="flex items-center gap-2 text-[9px] text-slate-500 uppercase font-bold">
-									<Activity className="w-3 h-3 text-violet-700 animate-pulse" />
-									Neural_Heartbeat: Stable
-								</div>
-							</div>
+          {/* Skills Section */}
+          <Section id="skills" title="Tech Capabilities">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-10">
+              {SKILLS.map((skillGroup, idx) => (
+                <div key={idx} className="p-8 glass-morphism rounded-[2.5rem] border-white/5 hover:border-cyber-cyan/20 transition-all group">
+                  <h4 className="text-[11px] font-black text-cyber-cyan uppercase tracking-[0.5em] mb-8 border-b border-cyber-cyan/10 pb-4">
+                    {skillGroup.category}
+                  </h4>
+                  <ul className="space-y-4">
+                    {skillGroup.items.map((skill, sIdx) => (
+                      <li key={sIdx} className="text-[13px] text-slate-500 group-hover:text-slate-300 transition-colors flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 bg-cyber-cyan/20 rounded-full" />
+                        {skill}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </Section>
 
-							<h1 className="text-5xl md:text-7xl lg:text-[7rem] font-bold leading-[1.1] tracking-tighter">
-								CRAFTING <br />
-								<span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-700 via-purple-800 to-indigo-950 italic">
-									NEXT_SYSTEMS.
-								</span>
-							</h1>
+          {/* Contact Section */}
+          <Section id="contact" title="Connection Port" className="pb-64">
+            <div className="py-24 text-center glass-morphism rounded-[6rem] border-cyber-cyan/10 p-16 md:p-32 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-cyber-cyan/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+              <h2 className="text-6xl md:text-8xl font-heading text-white font-black tracking-tighter mb-20 leading-[0.8] relative z-10">
+                Secure <br /> <span className="text-cyber-cyan">Uplink.</span>
+              </h2>
+              <div className="flex flex-col items-center gap-6 relative z-10">
+                <a href="mailto:arunbasnet54@gmail.com" className="inline-block text-xl md:text-3xl font-heading text-white hover:text-cyber-cyan transition-all duration-700 py-8 px-16 glass-morphism rounded-full border-cyber-cyan/20 hover:scale-105 shadow-[0_0_50px_rgba(0,245,255,0.05)]">
+                  arunbasnet54@gmail.com
+                </a>
+              </div>
+              <div className="mt-24 flex justify-center flex-wrap gap-12 md:gap-24 relative z-10">
+                <a 
+                  href="https://linkedin.com/in/sumanbasnet" 
+                  target="_blank" 
+                  className="flex items-center gap-4 text-[12px] uppercase tracking-[0.8em] font-black text-neutral-800 hover:text-cyber-cyan transition-all group/social"
+                >
+                  <svg className="w-5 h-5 transition-all duration-500 group-hover/social:scale-110 group-hover/social:drop-shadow-[0_0_8px_#00F5FF]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                  </svg>
+                  <span>LINKEDIN</span>
+                </a>
+                <a 
+                  href="https://github.com/sumanbasnet" 
+                  target="_blank" 
+                  className="flex items-center gap-4 text-[12px] uppercase tracking-[0.8em] font-black text-neutral-800 hover:text-cyber-cyan transition-all group/social"
+                >
+                  <svg className="w-5 h-5 transition-all duration-500 group-hover/social:scale-110 group-hover/social:drop-shadow-[0_0_8px_#00F5FF]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                  <span>GITHUB</span>
+                </a>
+              </div>
+            </div>
+          </Section>
 
-							<p className="text-base md:text-xl text-slate-400 max-w-3xl leading-relaxed font-light">
-								Engineering high-concurrency Next.js environments with surgical
-								precision. I turn complex server-side infrastructure into fluid,
-								SEO-optimized user journeys.
-							</p>
-
-							<div className="flex flex-wrap items-center gap-10 pt-10">
-								<a
-									href="#projects"
-									className="group relative px-10 py-5 glass-button text-white font-bold uppercase tracking-widest rounded-sm transition-all hover:translate-x-2 shadow-[0_10px_30px_rgba(76,29,149,0.2)]"
-								>
-									<span className="relative z-10 flex items-center gap-3">
-										VIEW_DEVOPS_LOGS
-										<ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-									</span>
-								</a>
-								<div className="space-y-1">
-									<div className="text-[10px] uppercase tracking-widest font-bold text-violet-900">
-										Active_State
-									</div>
-									<div className="text-sm font-medium tracking-wide">
-										Next.js Architecture & High-Performance UI
-									</div>
-								</div>
-							</div>
-						</div>
-					</RevealOnScroll>
-				</section>
-
-				{/* Projects Section */}
-				<section
-					id="projects"
-					className="py-40 px-8 md:px-16 lg:px-32 bg-black/60 backdrop-blur-[2px]"
-				>
-					<div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
-						<div className="space-y-6">
-							<div className="text-xs text-violet-700 tracking-[0.5em] uppercase font-bold">
-								Core_Deployments
-							</div>
-							<h2 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase">
-								Selected Units.
-							</h2>
-							{activeFilter && (
-								<div className="flex items-center gap-2 px-3 py-1 bg-violet-900/20 text-violet-500 text-[10px] uppercase tracking-widest font-bold border border-violet-900/20 w-fit">
-									<Filter className="w-3 h-3" />
-									Filtering: {activeFilter}
-									<button
-										onClick={() => setActiveFilter(null)}
-										className="ml-2 hover:text-white"
-									>
-										<XCircle className="w-3 h-3" />
-									</button>
-								</div>
-							)}
-						</div>
-						<div className="h-[1px] flex-1 bg-violet-900/10 mx-10 hidden md:block" />
-						<div className="text-slate-500 text-[11px] uppercase tracking-widest leading-loose text-right">
-							Filter: NextJS_Heavy <br />
-							Integrity: 100%
-						</div>
-					</div>
-
-					<div className="grid grid-cols-1 gap-48 min-h-[400px]">
-						{filteredProjects.length === 0 ? (
-							<div className="py-20 text-center text-slate-600 font-mono text-xs uppercase tracking-widest border border-dashed border-slate-900">
-								No deployments found matching filter criteria...
-							</div>
-						) : (
-							filteredProjects.map((project, idx) => {
-								const isDimmed =
-									hoveredSkill && !project.stack.includes(hoveredSkill);
-								const isHighlighted =
-									hoveredSkill && project.stack.includes(hoveredSkill);
-
-								return (
-									<RevealOnScroll
-										key={project.id}
-										direction={idx % 2 === 0 ? "left" : "right"}
-									>
-										<div
-											className={`flex flex-col ${
-												idx % 2 !== 0 ? "lg:flex-row-reverse" : "lg:flex-row"
-											} gap-16 items-center group transition-all duration-500 ${
-												isDimmed
-													? "opacity-20 grayscale scale-[0.98]"
-													: "opacity-100"
-											} ${
-												isHighlighted
-													? "ring-1 ring-violet-500/50 p-4 -m-4 bg-violet-950/5"
-													: ""
-											}`}
-										>
-											<div className="w-full lg:w-3/5 relative aspect-video overflow-hidden border border-violet-900/10 group-hover:border-violet-700/40 transition-all duration-700 shadow-2xl">
-												<img
-													src={project.image}
-													alt={project.title}
-													className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1500ms]"
-												/>
-												<div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-transparent opacity-80" />
-												<div className="absolute top-4 right-4 text-[10px] text-violet-700/40 uppercase tracking-widest font-bold">
-													Unit_0{idx + 1}
-												</div>
-												<div className="absolute bottom-6 left-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-y-4 group-hover:translate-y-0 duration-500">
-													<button className="glass-button text-white px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest shadow-lg">
-														Launch_System
-													</button>
-												</div>
-											</div>
-											<div className="w-full lg:w-2/5 space-y-8">
-												<div className="space-y-2">
-													<h3 className="text-3xl md:text-4xl font-bold tracking-tight group-hover:text-violet-500 transition-colors uppercase">
-														{project.title}
-													</h3>
-													<div className="flex flex-wrap gap-x-3 gap-y-1">
-														{project.stack.map((s) => (
-															<span
-																key={s}
-																className={`text-[9px] uppercase tracking-widest font-bold transition-colors ${
-																	hoveredSkill === s
-																		? "text-violet-400"
-																		: "text-violet-700"
-																}`}
-															>
-																{s}
-															</span>
-														))}
-													</div>
-												</div>
-												<p className="text-slate-400 text-base leading-relaxed font-light italic opacity-80">
-													"{project.description}"
-												</p>
-												<p className="text-slate-400 text-sm leading-relaxed font-light">
-													{project.longDescription}
-												</p>
-
-												<div className="grid grid-cols-2 gap-8 py-8 border-t border-violet-900/10">
-													{project.metrics.map((metric) => (
-														<div key={metric.label}>
-															<div className="text-violet-600 font-bold text-xl tracking-tight">
-																{metric.value}
-															</div>
-															<div className="text-slate-600 text-[10px] uppercase tracking-[0.2em] mt-1 font-bold">
-																{metric.label}
-															</div>
-														</div>
-													))}
-												</div>
-
-												<a
-													href="#"
-													className="inline-flex items-center gap-4 text-violet-500 text-xs uppercase tracking-[0.3em] hover:gap-6 transition-all group/btn font-bold"
-												>
-													READ_ARCH_FILE
-													<ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-												</a>
-											</div>
-										</div>
-									</RevealOnScroll>
-								);
-							})
-						)}
-					</div>
-				</section>
-
-				{/* Stack Section - Visual Skill Map */}
-				<section
-					id="stack"
-					className="py-40 px-8 md:px-16 lg:px-32 bg-transparent overflow-hidden grid-bg"
-				>
-					<div className="max-w-7xl mx-auto">
-						<RevealOnScroll direction="left">
-							<div className="mb-24 space-y-4">
-								<div className="h-1 w-24 bg-violet-700 mb-6" />
-								<h2 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase leading-none">
-									Technological <br /> Registry.
-								</h2>
-								<div className="flex items-center gap-4 text-violet-900 font-bold text-[10px] uppercase tracking-[0.4em]">
-									<Activity className="w-4 h-4 animate-pulse" />
-									Node Map Operational. Hover to Trace Dependencies.
-								</div>
-							</div>
-						</RevealOnScroll>
-
-						<div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-violet-900/10 border border-violet-900/10 shadow-[0_0_50px_rgba(76,29,149,0.05)] relative">
-							{SKILL_CATEGORIES.map((category, i) => (
-								<div
-									key={category.title}
-									className="bg-black/60 p-8 md:p-12 space-y-12 group transition-all relative"
-								>
-									<div className="absolute top-4 right-4 text-[8px] text-violet-950 font-mono tracking-widest pointer-events-none uppercase">
-										MOD_REF: {i === 0 ? "CORE_RUNTIME" : "VIRTUAL_DOM_UTILS"}
-									</div>
-
-									<RevealOnScroll
-										direction={i % 2 === 0 ? "left" : "right"}
-										delay={i * 100}
-									>
-										<div className="flex items-center justify-between mb-16 border-b border-violet-900/20 pb-6">
-											<div className="flex items-center gap-4">
-												<div className="p-3 bg-violet-950/20 text-violet-600 border border-violet-900/20 shadow-[0_0_15px_rgba(76,29,149,0.1)]">
-													{i === 0 ? (
-														<Cpu className="w-6 h-6" />
-													) : (
-														<Layers className="w-6 h-6" />
-													)}
-												</div>
-												<h3 className="font-bold text-2xl tracking-tighter uppercase text-violet-400">
-													{category.title}
-												</h3>
-											</div>
-										</div>
-
-										<div className="flex flex-wrap gap-4">
-											{category.skills.map((skill, idx) => {
-												const isFiltered = activeFilter === skill.name;
-												const hasDeploymentHighlights = PROJECTS.some((p) =>
-													p.stack.includes(skill.name)
-												);
-
-												return (
-													<div
-														key={skill.name}
-														onMouseEnter={() => setHoveredSkill(skill.name)}
-														onMouseLeave={() => setHoveredSkill(null)}
-														onClick={() =>
-															setActiveFilter(
-																activeFilter === skill.name ? null : skill.name
-															)
-														}
-														className={`skill-node relative group/item p-6 min-w-[180px] border transition-all duration-300 cursor-pointer overflow-hidden ${
-															isFiltered
-																? "bg-violet-900/20 border-violet-500 shadow-[0_0_20px_rgba(139,92,246,0.3)]"
-																: "bg-black/40 border-violet-900/10 hover:border-violet-700/50 hover:bg-violet-950/5"
-														}`}
-													>
-														<div className="absolute top-0 right-0 p-2 text-[8px] text-violet-900 font-bold tracking-tighter opacity-40 group-hover/item:opacity-100 uppercase">
-															{skill.status}
-														</div>
-
-														<div className="space-y-1 relative z-10">
-															<div className="flex items-center gap-2">
-																<span className="text-[9px] text-violet-900 font-bold">
-																	0{idx + 1}
-																</span>
-																<span
-																	className={`text-sm font-bold tracking-tight uppercase group-hover/item:text-violet-400 transition-colors ${
-																		isFiltered
-																			? "text-violet-400"
-																			: "text-slate-300"
-																	}`}
-																>
-																	{skill.name}
-																</span>
-															</div>
-															<div className="text-[10px] text-slate-600 font-light truncate">
-																{skill.checksum}
-															</div>
-														</div>
-
-														<div className="skill-utility absolute inset-0 bg-violet-950/95 flex flex-col justify-center p-4 opacity-0 transform translate-y-full transition-all duration-300 pointer-events-none">
-															<div className="text-[8px] text-violet-500 uppercase tracking-widest font-bold mb-1">
-																Utility_Profile
-															</div>
-															<div className="text-[10px] text-white font-medium leading-tight">
-																{skill.utility}
-															</div>
-															{hasDeploymentHighlights && (
-																<div className="mt-3 flex items-center gap-1 text-[8px] text-violet-400 uppercase font-bold">
-																	<Binary className="w-2 h-2" /> Trace_Available
-																</div>
-															)}
-														</div>
-
-														{isFiltered && (
-															<div className="absolute bottom-2 right-2">
-																<Filter className="w-3 h-3 text-violet-500" />
-															</div>
-														)}
-													</div>
-												);
-											})}
-										</div>
-									</RevealOnScroll>
-								</div>
-							))}
-						</div>
-
-						<RevealOnScroll direction="left" delay={400}>
-							<div className="mt-24 p-12 glass-card border border-violet-900/10 rounded-sm flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
-								<div className="absolute top-0 right-0 w-64 h-64 bg-violet-900/5 rotate-45 transform translate-x-32 -translate-y-32 pointer-events-none" />
-								<div className="space-y-2 relative z-10">
-									<h4 className="text-xl font-bold uppercase tracking-tighter text-violet-400">
-										Node_Mapping_Intelligence
-									</h4>
-									<p className="text-slate-500 text-sm max-w-xl font-light leading-relaxed">
-										This map functions as an interactive routing table. Hovering
-										over a tech node triggers a visual trace to its associated
-										deployments in the registry above. Click to lock a filter
-										across the ecosystem.
-									</p>
-								</div>
-								<div className="flex flex-col items-center gap-4 relative z-10">
-									<div className="relative">
-										<ShieldCheck className="w-20 h-20 text-violet-900 opacity-20" />
-										<Binary className="w-8 h-8 text-violet-700 absolute inset-0 m-auto animate-pulse" />
-									</div>
-									<div className="text-[9px] text-violet-900 font-bold tracking-[0.4em] uppercase">
-										Status: Mapping_Active
-									</div>
-								</div>
-							</div>
-						</RevealOnScroll>
-					</div>
-				</section>
-
-				{/* Experience Section */}
-				<section
-					id="experience"
-					className="py-40 px-8 md:px-16 lg:px-32 bg-black/40"
-				>
-					<div className="max-w-4xl">
-						<RevealOnScroll direction="left">
-							<h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-20 uppercase">
-								Career_Chronology.
-							</h2>
-						</RevealOnScroll>
-
-						<div className="space-y-32">
-							{EXPERIENCE.map((exp, i) => (
-								<RevealOnScroll
-									key={exp.company + exp.role}
-									direction={i % 2 === 0 ? "left" : "right"}
-								>
-									<div className="relative group pl-12 border-l border-violet-900/10">
-										<div className="absolute left-[-5px] top-0 w-[9px] h-[9px] bg-violet-900 rounded-full shadow-[0_0_10px_#4c1d95] group-hover:scale-150 transition-transform" />
-										<div className="absolute left-[-80px] top-0 text-xs text-slate-800 rotate-90 transform origin-left uppercase tracking-widest hidden lg:block opacity-30 group-hover:opacity-100 transition-opacity font-bold">
-											LOG_ENTRY_0{i + 1}
-										</div>
-										<div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-10">
-											<div>
-												<h3 className="text-2xl font-bold group-hover:text-violet-600 transition-colors uppercase">
-													{exp.role}
-												</h3>
-												<div className="flex items-center gap-4 mt-2">
-													<span className="text-violet-700 text-sm uppercase tracking-[0.3em] font-bold">
-														{exp.company}
-													</span>
-													<span className="h-[1px] w-8 bg-slate-800" />
-													<span className="text-slate-600 text-[10px] uppercase tracking-widest font-bold">
-														{exp.period}
-													</span>
-												</div>
-											</div>
-										</div>
-										<div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-											<div className="md:col-span-2 space-y-6 text-sm font-light text-slate-400 leading-relaxed">
-												{exp.highlights.map((h, j) => (
-													<div key={j} className="flex gap-4">
-														<span className="text-violet-900 text-xs mt-1 font-bold">
-															/*
-														</span>
-														<p>{h}</p>
-													</div>
-												))}
-											</div>
-											<div className="space-y-4">
-												<div className="text-[9px] text-slate-600 uppercase tracking-[0.4em] mb-4 font-bold">
-													Stack_Signature
-												</div>
-												<div className="flex flex-wrap gap-2">
-													{exp.stack.map((s) => (
-														<span
-															key={s}
-															className="px-3 py-1 bg-violet-950/20 rounded-sm text-[9px] uppercase text-violet-600 border border-violet-900/10 font-bold"
-														>
-															{s}
-														</span>
-													))}
-												</div>
-											</div>
-										</div>
-									</div>
-								</RevealOnScroll>
-							))}
-						</div>
-					</div>
-				</section>
-
-				{/* Contact Section */}
-				<section
-					id="contact"
-					className="py-40 px-8 md:px-16 lg:px-32 bg-transparent backdrop-blur-[1px]"
-				>
-					<div className="max-w-6xl mx-auto relative">
-						<div className="absolute -top-20 -left-20 w-64 h-64 bg-violet-900/10 blur-[120px] rounded-full pointer-events-none" />
-
-						<div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-							<RevealOnScroll direction="left">
-								<div className="space-y-12">
-									<div className="space-y-6">
-										<h2 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase leading-none">
-											Let's <br />{" "}
-											<span className="text-violet-700 italic shadow-[0_0_15px_rgba(76,29,149,0.3)]">
-												Interface.
-											</span>
-										</h2>
-										<p className="text-slate-400 text-base font-light leading-relaxed">
-											Bridge the connection. I am currently accepting new
-											deployments for enterprise-grade Next.js infrastructure
-											and high-concurrency UI projects.
-										</p>
-									</div>
-
-									<div className="space-y-8">
-										<a
-											href="mailto:arunbasnet54@gmail.com"
-											className="group flex items-center gap-6 p-8 glass-card rounded-sm hover:border-violet-700 transition-all shadow-[0_0_20px_rgba(0,0,0,0.4)]"
-										>
-											<div className="w-14 h-14 flex items-center justify-center bg-violet-950/20 text-violet-700 group-hover:scale-110 transition-transform border border-violet-900/20">
-												<Mail className="w-6 h-6" />
-											</div>
-											<div>
-												<div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1 font-bold">
-													Direct_Transmission
-												</div>
-												<span className="text-lg md:text-xl font-bold group-hover:text-violet-700 transition-colors">
-													arunbasnet54@gmail.com
-												</span>
-											</div>
-										</a>
-									</div>
-								</div>
-							</RevealOnScroll>
-
-							<RevealOnScroll direction="right">
-								<div className="p-10 glass-card rounded-sm relative overflow-hidden group border-violet-900/10">
-									<div className="absolute top-0 right-0 w-32 h-32 bg-violet-900/[0.02] rotate-45 transform translate-x-16 -translate-y-16" />
-									<form
-										className="space-y-8"
-										onSubmit={(e) => e.preventDefault()}
-									>
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-											<div className="space-y-3">
-												<label className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">
-													Source_ID
-												</label>
-												<input
-													type="text"
-													placeholder="Identity Token"
-													className="w-full bg-slate-900/30 border border-slate-800 rounded-sm px-6 py-5 focus:outline-none focus:border-violet-900 transition-all text-white placeholder:text-slate-800 text-sm"
-												/>
-											</div>
-											<div className="space-y-3">
-												<label className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">
-													Routing_Protocol
-												</label>
-												<input
-													type="email"
-													placeholder="Return Address"
-													className="w-full bg-slate-900/30 border border-slate-800 rounded-sm px-6 py-5 focus:outline-none focus:border-violet-900 transition-all text-white placeholder:text-slate-800 text-sm"
-												/>
-											</div>
-										</div>
-										<div className="space-y-3">
-											<label className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">
-												Data_Package
-											</label>
-											<textarea
-												rows={5}
-												placeholder="System requirements and mission parameters..."
-												className="w-full bg-slate-900/30 border border-slate-800 rounded-sm px-6 py-5 focus:outline-none focus:border-violet-900 transition-all text-white placeholder:text-slate-800 text-sm resize-none"
-											/>
-										</div>
-										<button
-											type="submit"
-											className="w-full py-6 glass-button text-white font-bold uppercase tracking-[0.3em] text-sm rounded-sm transform active:scale-95 group"
-										>
-											EXECUTE_COMMIT
-											<ChevronRight className="inline-block ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-										</button>
-									</form>
-								</div>
-							</RevealOnScroll>
-						</div>
-					</div>
-				</section>
-			</main>
-
-			{/* Footer */}
-			<footer className="py-20 px-8 md:px-16 border-t border-slate-900 relative z-10 bg-black/80">
-				<div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
-					<div className="space-y-6 text-center md:text-left">
-						<div className="flex items-center justify-center md:justify-start gap-4">
-							<div className="w-8 h-8 bg-violet-900 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-[0_0_10px_rgba(76,29,149,0.4)]">
-								S
-							</div>
-							<span className="font-bold tracking-tight text-xl uppercase italic">
-								SUMAN<span className="text-violet-700">BASNET</span>
-							</span>
-						</div>
-						<div className="text-[9px] uppercase tracking-[0.5em] text-slate-700 font-bold">
-							© {new Date().getFullYear()} ARCH_FILE_v2.0 // KERNEL_STABLE //
-							BUILT_WITH_GEMINI_REACTIONS
-						</div>
-					</div>
-
-					<div className="flex flex-wrap justify-center gap-12 text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">
-						<a href="#" className="hover:text-violet-700 transition-colors">
-							Manifest_Code
-						</a>
-						<a href="#" className="hover:text-violet-700 transition-colors">
-							Privacy_Layer
-						</a>
-						<a href="#" className="hover:text-violet-700 transition-colors">
-							Latency_Index
-						</a>
-					</div>
-
-					<div className="flex gap-6">
-						<a
-							href="#"
-							className="w-12 h-12 flex items-center justify-center border border-slate-800 rounded-sm hover:border-violet-700/50 hover:text-violet-700 transition-all group"
-						>
-							<Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
-						</a>
-						<a
-							href="#"
-							className="w-12 h-12 flex items-center justify-center border border-slate-800 rounded-sm hover:border-violet-700/50 hover:text-violet-700 transition-all group"
-						>
-							<Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
-						</a>
-					</div>
-				</div>
-			</footer>
-		</div>
-	);
+          <footer className="px-10 md:px-24 py-32 flex flex-col md:flex-row justify-between items-center gap-12 text-[11px] uppercase tracking-[0.8em] text-neutral-800 font-black border-t border-white/5 bg-pitch-black relative z-10">
+            <div className="flex items-center gap-6">
+              <div className="w-3 h-3 bg-cyber-cyan rounded-full animate-ping opacity-60" />
+              <span>STATION_v5.8</span>
+            </div>
+            <div className="text-neutral-900 font-mono">NEPAL // ARCHIVE_24</div>
+            <div className="text-cyber-cyan opacity-80">© SUMAN_BASNET</div>
+          </footer>
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default App;
