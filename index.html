@@ -1,120 +1,114 @@
+
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Suman Basnet | Frontend Architect</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
-			rel="stylesheet"
-		/>
-		<script src="https://cdn.tailwindcss.com"></script>
-		<script>
-			tailwind.config = {
-				theme: {
-					extend: {
-						colors: {
-							"pitch-black": "#020202",
-							"cyber-cyan": "#00F5FF",
-							"deep-space": "#00080a",
-							"glass-white": "rgba(255, 255, 255, 0.02)",
-						},
-						fontFamily: {
-							heading: ["Azeret Mono", "monospace"],
-							body: ["JetBrains Mono", "monospace"],
-						},
-						animation: {
-							"fade-in": "fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-							"slide-up": "slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-							"pulse-glow": "pulseGlow 4s ease-in-out infinite",
-						},
-						keyframes: {
-							fadeIn: {
-								"0%": { opacity: "0" },
-								"100%": { opacity: "1" },
-							},
-							slideUp: {
-								"0%": { opacity: "0", transform: "translateY(40px)" },
-								"100%": { opacity: "1", transform: "translateY(0)" },
-							},
-							pulseGlow: {
-								"0%, 100%": { opacity: "0.4", filter: "blur(8px)" },
-								"50%": { opacity: "0.8", filter: "blur(12px)" },
-							},
-						},
-					},
-				},
-			};
-		</script>
-		<script type="importmap">
-			{
-				"imports": {
-					"react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-					"react/": "https://esm.sh/react@^19.2.3/",
-					"react": "https://esm.sh/react@^19.2.3",
-					"vite": "https://esm.sh/vite@^7.3.1",
-					"@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
-				}
-			}
-		</script>
-		<style>
-			* {
-				cursor: none !important;
-			}
-
-			body {
-				background-color: #020202;
-				color: #94a3b8;
-				-webkit-font-smoothing: antialiased;
-				overflow-x: hidden;
-			}
-
-			.glass-morphism {
-				background: linear-gradient(
-					135deg,
-					rgba(255, 255, 255, 0.03),
-					rgba(255, 255, 255, 0.01)
-				);
-				backdrop-filter: blur(24px);
-				-webkit-backdrop-filter: blur(24px);
-				border: 1px solid rgba(255, 255, 255, 0.08);
-				box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05),
-					0 20px 50px -10px rgba(0, 0, 0, 0.8);
-			}
-
-			.glass-morphism-card {
-				background: rgba(255, 255, 255, 0.015);
-				backdrop-filter: blur(40px);
-				-webkit-backdrop-filter: blur(40px);
-				border: 1px solid rgba(255, 255, 255, 0.06);
-				box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02),
-					0 30px 60px -12px rgba(0, 0, 0, 0.9);
-			}
-
-			.cyan-glow {
-				box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
-			}
-
-			::-webkit-scrollbar {
-				width: 4px;
-			}
-			::-webkit-scrollbar-track {
-				background: #020202;
-			}
-			::-webkit-scrollbar-thumb {
-				background: #00f5ff;
-			}
-
-			canvas {
-				image-rendering: pixelated;
-			}
-		</style>
-		<link rel="stylesheet" href="/index.css" />
-	</head>
-	<body class="font-body selection:bg-cyber-cyan selection:text-black">
-		<div id="root"></div>
-		<script type="module" src="/index.tsx"></script>
-	</body>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suman Basnet | React Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            50: '#fafafa',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            300: '#d6d3d1',
+                            400: '#a8a29e',
+                            500: '#78716c',
+                            600: '#57534e',
+                            700: '#44403c',
+                            800: '#292524',
+                            900: '#1c1917',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        .dark body {
+            background-color: #1c1c1a;
+            color: #e3e1d9;
+        }
+        body {
+            background-color: #f2f0ea;
+            color: #2d2d2a;
+        }
+        .glass {
+            background: rgba(250, 249, 246, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(45, 45, 42, 0.05);
+            transition: background-color 0.5s ease;
+        }
+        .dark .glass {
+            background: rgba(40, 40, 38, 0.7);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #2d2d2a 0%, #78716c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dark .text-gradient {
+            background: linear-gradient(135deg, #e3e1d9 0%, #a8a29e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section-padding {
+            padding: 5rem 1rem;
+        }
+        /* Subtle noise texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: 100;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        @media (min-width: 768px) {
+            .section-padding {
+                padding: 8rem 2rem;
+            }
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@emailjs/browser": "https://esm.sh/@emailjs/browser@^4.4.1"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
 </html>

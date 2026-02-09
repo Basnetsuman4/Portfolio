@@ -2,28 +2,28 @@
 export interface Project {
   id: string;
   title: string;
-  category: string;
+  category: 'Industrial' | 'College';
   description: string;
-  bullets: string[];
-  tech: string[];
+  tags: string[];
   link?: string;
 }
 
-export interface SkillGroup {
-  category: string;
-  items: string[];
+export interface Experience {
+  id: string;
+  role: string;
+  company: string;
+  duration: string;
+  responsibilities: string[];
 }
 
-export interface Experience {
-  company: string;
-  role: string;
-  period: string;
-  description: string;
+export interface SkillCategory {
+  name: string;
+  skills: string[];
 }
 
 export interface Education {
   institution: string;
   degree: string;
-  period: string;
+  duration: string;
   location: string;
 }
