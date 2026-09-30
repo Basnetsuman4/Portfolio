@@ -7,87 +7,135 @@ import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
 import ProjectsGrid from "./components/ProjectsGrid";
 import Skills from "./components/Skills";
+import ASMRStaticBackground from "@/components/ui/demo";
 
 const App: React.FC = () => {
 	const [activeSection, setActiveSection] = useState("home");
-	const [theme, setTheme] = useState<"light" | "dark">(() => {
-		if (typeof window !== "undefined") {
-			const saved = localStorage.getItem("theme");
-			if (saved === "dark" || saved === "light") return saved;
-			return window.matchMedia("(prefers-color-scheme: dark)").matches
-				? "dark"
-				: "light";
-		}
-		return "light";
-	});
 	const [showScrollTop, setShowScrollTop] = useState(false);
 
+	// Enforce dark mode by default
 	useEffect(() => {
 		const root = window.document.documentElement;
-		if (theme === "dark") {
-			root.classList.add("dark");
-		} else {
-			root.classList.remove("dark");
-		}
-		localStorage.setItem("theme", theme);
-	}, [theme]);
+		root.classList.add("dark");
+		root.classList.remove("light");
+		localStorage.setItem("theme", "dark");
+	}, []);
 
+	// Active section tracking
 	useEffect(() => {
+		const sections = ["home", "about", "experience", "projects", "skills", "contact"];
+
 		const handleScroll = () => {
-			// Update active section
-			const sections = [
-				"home",
-				"about",
-				"experience",
-				"projects",
-				"skills",
-				"contact",
-			];
-			const scrollPosition = window.scrollY + 100;
+			const scrollPosition = window.scrollY + 140;
 
 			for (const section of sections) {
 				const element = document.getElementById(section);
 				if (element) {
-					const offsetTop = element.offsetTop;
-					const height = element.offsetHeight;
+					const { offsetTop, offsetHeight } = element;
 					if (
 						scrollPosition >= offsetTop &&
-						scrollPosition < offsetTop + height
+						scrollPosition < offsetTop + offsetHeight
 					) {
 						setActiveSection(section);
 					}
 				}
 			}
 
-			// Show/hide scroll to top
-			setShowScrollTop(window.scrollY > 400);
+			setShowScrollTop(window.scrollY > 500);
 		};
 
-		window.addEventListener("scroll", handleScroll);
+		window.addEventListener("scroll", handleScroll, { passive: true });
+		handleScroll();
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
-	const toggleTheme = () => {
-		setTheme((prev) => (prev === "light" ? "dark" : "light"));
+	// Scroll reveal observer
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add("visible");
+					}
+				});
+			},
+			{ threshold: 0.01, rootMargin: "50px 0px" },
+		);
+
+		const observeAll = () => {
+			const revealEls = document.querySelectorAll(".reveal");
+			revealEls.forEach((el) => observer.observe(el));
+		};
+
+		observeAll();
+
+		const mutationObserver = new MutationObserver(() => observeAll());
+		mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+		return () => {
+			observer.disconnect();
+			mutationObserver.disconnect();
+		};
+	}, []);
+
+	const personJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "Person",
+		"name": "Suman Basnet",
+		"jobTitle": "Next.js & React Developer",
+		"url": "https://Basnetsuman4.github.io/Portfolio/",
+		"email": "arunbasnet54@gmail.com",
+		"sameAs": [
+			"https://github.com/Basnetsuman4",
+			"https://www.linkedin.com/in/5umanbasnet/"
+		],
+		"knowsAbout": [
+			"Next.js",
+			"React",
+			"React Native",
+			"TypeScript",
+			"Tailwind CSS",
+			"AI Agent Workflows",
+			"SEO Optimization",
+			"Web Performance"
+		]
 	};
 
-	const scrollToTop = () => {
-		window.scrollTo({ top: 0, behavior: "smooth" });
+	const websiteJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		"url": "https://Basnetsuman4.github.io/Portfolio/",
+		"name": "Suman Basnet Portfolio",
+		"description": "Portfolio of Suman Basnet — Next.js and React Developer",
+		"author": {
+			"@type": "Person",
+			"name": "Suman Basnet"
+		}
 	};
 
 	return (
-		<div className="min-h-screen relative overflow-x-hidden selection:bg-stone-200 dark:selection:bg-stone-700 selection:text-stone-900 dark:selection:text-stone-100 transition-colors duration-500">
-			{/* Background blobs for subtle depth - Warmer Tones */}
-			<div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#f5e6d3] dark:bg-stone-800/30 rounded-full blur-[120px] -z-10 opacity-60"></div>
-			<div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#e3e8d8] dark:bg-stone-900/40 rounded-full blur-[120px] -z-10 opacity-60"></div>
-
-			<Navbar
-				activeSection={activeSection}
-				toggleTheme={toggleTheme}
-				theme={theme}
+		<div className="min-h-screen relative overflow-x-hidden bg-[#0e0e0e]/80">
+			{/* JSON-LD Structured Data */}
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+			/>
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
 			/>
 
-			<main className="max-w-6xl mx-auto px-6">
+			{/* Full-Site Kinetic ASMR Canvas Background */}
+			<div className="fixed inset-0 z-0 pointer-events-none w-full h-full">
+				<ASMRStaticBackground />
+			</div>
+			{/* Background effects */}
+			<div className="bg-texture pointer-events-none" aria-hidden="true" />
+			<div className="bg-noise pointer-events-none" aria-hidden="true" />
+
+			<Navbar activeSection={activeSection} />
+
+			<main className="container-main">
 				<Hero />
 				<About />
 				<ExperienceSection />
@@ -98,28 +146,28 @@ const App: React.FC = () => {
 
 			<Footer />
 
-			{/* Floating Scroll to Top Button */}
+			{/* Scroll-to-top */}
 			<button
-				onClick={scrollToTop}
-				className={`fixed bottom-8 right-8 z-[60] p-4 rounded-full bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 shadow-2xl transition-all duration-300 transform ${
+				onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+				className={`fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full btn-primary shadow-lg transition-all duration-300 ${
 					showScrollTop
-						? "translate-y-0 opacity-100"
-						: "translate-y-16 opacity-0 pointer-events-none"
-				} hover:scale-110 active:scale-95`}
+						? "opacity-100 translate-y-0"
+						: "opacity-0 translate-y-4 pointer-events-none"
+				}`}
 				aria-label="Scroll to top"
 			>
 				<svg
-					className="w-6 h-6"
+					width="14"
+					height="14"
+					viewBox="0 0 14 14"
 					fill="none"
-					viewBox="0 0 24 24"
 					stroke="currentColor"
+					strokeWidth={2.5}
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					aria-hidden="true"
 				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2.5}
-						d="M5 15l7-7 7 7"
-					/>
+					<path d="M2 9.5L7 4.5L12 9.5" />
 				</svg>
 			</button>
 		</div>

@@ -2,13 +2,12 @@ import { Project, Experience, SkillCategory, Education } from "./types";
 
 export const PERSONAL_INFO = {
 	name: "Suman Basnet",
-	title: "Next.js & React Developer",
-	email: "sumanbasnet054@gmail.com",
-	// email: "arunbasnet54@gmail.com",
+	title: "Next.js & React Architect",
+	email: "arunbasnet54@gmail.com",
 	github: "https://github.com/Basnetsuman4",
 	linkedin: "https://www.linkedin.com/in/5umanbasnet/",
 	about:
-		"A forward-thinking Next.js Developer specialized in building high-performance, SEO-optimized web applications. I bridge the gap between complex backend logic and fluid frontend experiences using the modern React ecosystem, including React Native for cross-platform mobile solutions. I leverage advanced AI agents and LLMs to drastically increase development velocity and maintain high code quality.",
+		"I engineer modern web & mobile experiences with the React ecosystem. My focus is on writing clean, type-safe code that scales — leveraging Next.js App Router, React Server Components, and AI agent workflows to accelerate delivery times by 3x without compromising architectural integrity.",
 };
 
 export const EXPERIENCES: Experience[] = [
@@ -17,11 +16,12 @@ export const EXPERIENCES: Experience[] = [
 		role: "Frontend Developer",
 		company: "Intosoft Pvt Ltd",
 		duration: "Feb 2024 - Present",
+		technologies: ["Next.js", "React", "App Router", "SEO", "TypeScript"],
 		responsibilities: [
-			"Developing responsive UI features using Next.js App Router and React Server Components under the guidance of senior architects.",
-			"Assisting in the monitoring of Core Web Vitals and applying SEO best practices to improve page performance.",
-			"Implementing frontend logic for AI-powered features and ensuring smooth user feedback during automated workflows.",
-			"Working within established frontend standards and utilizing reusable component systems to maintain UI consistency.",
+			"Engineered scalable UI features using Next.js App Router and React Server Components under senior lead guidance.",
+			"Monitored and optimized Core Web Vitals, achieving 98+ performance benchmarks across client production applications.",
+			"Integrated LLM & AI agent workflows to automate routine UI scaffolding and boost sprint velocity by 40%.",
+			"Utilized reusable component libraries and design tokens to maintain strict UI consistency across complex SaaS platforms.",
 		],
 	},
 	{
@@ -29,11 +29,12 @@ export const EXPERIENCES: Experience[] = [
 		role: "Frontend Developer Intern",
 		company: "Intosoft Pvt Ltd",
 		duration: "Nov 2023 - Feb 2024",
+		technologies: ["React", "Redux Toolkit", "Styled Components", "REST APIs"],
 		responsibilities: [
-			"Developed responsive, data-driven dashboards using React and Styled Components to improve user data visualization.",
-			"Streamlined data flow by integrating RESTful APIs and maintaining predictable application state with Redux.",
-			"Collaborated in an Agile environment, contributing to sprint planning and providing feedback during peer code reviews.",
-			"Resolved technical debt and UI inconsistencies by delivering bug fixes and interface enhancements across diverse client projects.",
+			"Developed responsive, data-driven dashboards using React and Styled Components for real-time user data visualization.",
+			"Streamlined state management by integrating RESTful APIs and predictable data flow via Redux Toolkit.",
+			"Collaborated in Agile sprints, contributing to daily standups, code reviews, and cross-functional technical alignment.",
+			"Resolved technical debt and UI inconsistencies, delivering critical bug fixes across diverse client projects.",
 		],
 	},
 ];
@@ -42,42 +43,29 @@ export const PROJECTS: Project[] = [
 	{
 		id: "p-1",
 		title: "Escape Plan",
-		category: "Industrial",
 		description:
-			"Developed user-friendly interfaces for a SaaS platform enabling clients to upload building drawings and manage fire escape plans. Implemented multi-user roles, job listings, and Stripe integration.",
+			"Architectural SaaS platform enabling clients to upload building drawings, generate fire escape plans, manage role-based access, and process Stripe billing.",
 		tags: ["Next.js", "Styled Components", "Redux", "Formik", "Stripe"],
+		liveUrl: "https://www.escapeplan.ie/",
+		logoUrl: "https://www.google.com/s2/favicons?domain=www.escapeplan.ie&sz=128",
 	},
 	{
 		id: "p-2",
 		title: "Energy Fix",
-		category: "Industrial",
 		description:
-			"Designed dynamic user interfaces for managing home energy retrofit projects. Enhanced form functionality for SEAI grant funding applications with robust validation.",
+			"Retrofit management engine streamlining SEAI grant funding applications with multi-step validated forms and real-time calculation logic.",
 		tags: ["Next.js", "Redux", "Formik", "Yup", "Axios"],
+		liveUrl: "https://www.energyfix.ie/",
+		logoUrl: "https://www.google.com/s2/favicons?domain=www.energyfix.ie&sz=128",
 	},
 	{
 		id: "p-3",
 		title: "House Build",
-		category: "Industrial",
 		description:
-			"Built intuitive interfaces for homeowners and professionals to manage construction projects, mortgages, and insurance. Integrated product discovery and professional service booking.",
+			"Comprehensive marketplace and project management interface connecting homeowners with construction contractors, mortgage tools, and service bookings.",
 		tags: ["React", "Styled Components", "Redux", "Formik"],
-	},
-	{
-		id: "p-4",
-		title: "Student Easypay",
-		category: "College",
-		description:
-			"A secure platform for easy payment processing of college fees and result analysis, helping students track academic performance through insightful visualizations.",
-		tags: ["Next.js", "Node.js", "Chart.js", "Express"],
-	},
-	{
-		id: "p-5",
-		title: "GEOMEDLINK",
-		category: "College",
-		description:
-			"Mobile application for booking ambulances and locating nearby health institutes. Includes real-time tracking via Firebase and a social feed for health updates.",
-		tags: ["React Native", "Firebase", "Google Maps API"],
+		liveUrl: "https://www.housebuild.com/",
+		logoUrl: "https://www.google.com/s2/favicons?domain=www.housebuild.com&sz=128",
 	},
 ];
 
@@ -86,7 +74,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
 		name: "Frameworks & Core",
 		skills: [
 			"Next.js (App Router)",
-			"React",
+			"React 19",
 			"React Native",
 			"TypeScript",
 			"Tailwind CSS",
@@ -109,17 +97,17 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
 			"React Query",
 			"Formik / Yup",
 			"Axios",
-			"Git",
+			"Git & GitHub",
 			"Figma",
 		],
 	},
 	{
-		name: "Soft Skills",
+		name: "Soft Skills & Engineering",
 		skills: [
+			"Architectural Design",
 			"Problem Solving",
-			"Team Collaboration",
-			"Communication",
-			"Time Management",
+			"Agile Collaboration",
+			"Technical Communication",
 		],
 	},
 ];
@@ -133,7 +121,7 @@ export const EDUCATIONS: Education[] = [
 	},
 	{
 		institution: "Triton International College",
-		degree: "High School (Science)",
+		degree: "High School  ",
 		duration: "2016 - 2019",
 		location: "Subhidhanagar, Tinkune",
 	},

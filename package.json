@@ -13,13 +13,22 @@
 	},
 	"dependencies": {
 		"@emailjs/browser": "^4.4.1",
+		"@radix-ui/react-label": "^2.1.2",
+		"@radix-ui/react-slot": "^1.1.2",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"lucide-react": "^0.475.0",
 		"react": "^19.2.4",
-		"react-dom": "^19.2.4"
+		"react-dom": "^19.2.4",
+		"tailwind-merge": "^3.0.1"
 	},
 	"devDependencies": {
 		"@types/node": "^22.14.0",
 		"@vitejs/plugin-react": "^5.0.0",
+		"autoprefixer": "^10.4.20",
 		"gh-pages": "^6.3.0",
+		"postcss": "^8.5.2",
+		"tailwindcss": "^3.4.17",
 		"typescript": "~5.8.2",
 		"vite": "^6.2.0"
 	}

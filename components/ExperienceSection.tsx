@@ -1,51 +1,187 @@
-
-import React from 'react';
-import { EXPERIENCES } from '../data';
+import React from "react";
+import { EXPERIENCES } from "../data";
+import SectionHeader from "./SectionHeader";
 
 const ExperienceSection: React.FC = () => {
-  return (
-    <section id="experience" className="section-padding">
-      <div className="max-w-4xl mx-auto space-y-16">
-        <div className="text-center space-y-4">
-          <span className="text-xs font-bold text-stone-400 uppercase tracking-[0.2em]">Career Timeline</span>
-          <h2 className="text-4xl font-bold text-stone-900 dark:text-stone-50">Professional Experience</h2>
-          <p className="text-stone-500 dark:text-stone-400 text-lg font-light">My evolution in the software development industry.</p>
-        </div>
+	return (
+		<section id="experience" className="section-padding">
+			<div
+				style={{
+					maxWidth: "52rem",
+					marginInline: "auto",
+					display: "flex",
+					flexDirection: "column",
+					gap: "3.5rem",
+				}}
+			>
+				<SectionHeader
+					eyebrow="Experience"
+					title="Professional experience"
+					description="Building production web applications at Intosoft Pvt Ltd."
+					align="center"
+				/>
 
-        <div className="space-y-10">
-          {EXPERIENCES.map((exp) => (
-            <div 
-              key={exp.id} 
-              className="bg-[#faf9f6] dark:bg-stone-800/40 rounded-[2.5rem] p-8 md:p-12 border border-stone-200/60 dark:border-stone-700/30 shadow-lg shadow-stone-200/30 dark:shadow-black/20 hover:shadow-xl hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-500 group"
-            >
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
-                <div>
-                  <h3 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-2">{exp.role}</h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-stone-600 dark:text-stone-300 font-semibold">{exp.company}</span>
-                    <span className="w-1 h-1 rounded-full bg-stone-300 dark:bg-stone-600"></span>
-                    <span className="text-stone-400 dark:text-stone-500 font-medium text-sm">{exp.duration}</span>
-                  </div>
-                </div>
-                <div className="px-4 py-1.5 bg-[#f2f0ea] dark:bg-stone-900/50 text-stone-500 dark:text-stone-400 rounded-full text-[10px] font-bold uppercase tracking-widest border border-stone-200/50 dark:border-stone-700/50">
-                  Engineering
-                </div>
-              </div>
-              
-              <ul className="grid gap-4">
-                {exp.responsibilities.map((resp, idx) => (
-                  <li key={idx} className="flex items-start gap-4 text-stone-500 dark:text-stone-400 leading-relaxed text-lg font-light">
-                    <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-600 flex-shrink-0 group-hover:bg-stone-500 dark:group-hover:bg-stone-300 transition-colors"></span>
-                    {resp}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+				{/* Timeline */}
+				<div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+					{EXPERIENCES.map((exp, idx) => (
+						<div
+							key={exp.id}
+							className="reveal"
+							style={{
+								display: "flex",
+								gap: "clamp(1.25rem, 4vw, 2rem)",
+								transitionDelay: `${idx * 100}ms`,
+							}}
+						>
+							{/* Timeline column */}
+							<div
+								className="hidden sm:flex flex-col items-center"
+								style={{ width: "1.25rem", flexShrink: 0 }}
+							>
+								<div className="timeline-dot" />
+								{idx < EXPERIENCES.length - 1 && (
+									<div
+										style={{
+											flex: 1,
+											width: "1px",
+											background: "var(--border)",
+											margin: "0.625rem 0",
+											minHeight: "2.5rem",
+										}}
+									/>
+								)}
+							</div>
+
+							{/* Card */}
+							<div
+								style={{
+									flex: 1,
+									paddingBottom: idx === EXPERIENCES.length - 1 ? 0 : "2rem",
+								}}
+							>
+								<div className="card" style={{ overflow: "hidden" }}>
+									{/* Card top accent line */}
+									<div
+										aria-hidden="true"
+										style={{
+											height: "3px",
+											background: idx === 0
+												? "linear-gradient(90deg, var(--accent) 0%, transparent 100%)"
+												: "transparent",
+											borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+										}}
+									/>
+
+									<div style={{ padding: "clamp(1.25rem, 3vw, 1.75rem)" }}>
+										{/* Header */}
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: "0.875rem",
+												marginBottom: "1.25rem",
+											}}
+											className="sm:flex-row sm:items-start sm:justify-between"
+										>
+											<div>
+												<h3
+													className="font-display font-semibold"
+													style={{
+														fontSize: "1.125rem",
+														color: "var(--text-primary)",
+														letterSpacing: "-0.02em",
+													}}
+												>
+													{exp.role}
+												</h3>
+												<p
+													style={{
+														fontSize: "0.9rem",
+														color: "var(--text-secondary)",
+														marginTop: "0.2rem",
+														fontWeight: 500,
+													}}
+												>
+													{exp.company}
+												</p>
+											</div>
+											<span
+												className="tag tag-accent"
+												style={{ alignSelf: "flex-start", whiteSpace: "nowrap" }}
+											>
+												{exp.duration}
+											</span>
+										</div>
+
+										{/* Responsibilities */}
+										<ul
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: "0.625rem",
+												marginBottom: exp.technologies?.length ? "1.25rem" : 0,
+											}}
+										>
+											{exp.responsibilities.map((resp, rIdx) => (
+												<li
+													key={rIdx}
+													style={{
+														display: "flex",
+														alignItems: "flex-start",
+														gap: "0.625rem",
+														fontSize: "0.875rem",
+														lineHeight: 1.65,
+														color: "var(--text-secondary)",
+													}}
+												>
+													<svg
+														width="14"
+														height="14"
+														viewBox="0 0 14 14"
+														fill="none"
+														aria-hidden="true"
+														style={{ marginTop: "0.275rem", flexShrink: 0, color: "var(--accent)" }}
+													>
+														<path
+															d="M2.5 7l3.5 3.5 5.5-7"
+															stroke="currentColor"
+															strokeWidth="1.5"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+														/>
+													</svg>
+													{resp}
+												</li>
+											))}
+										</ul>
+
+										{/* Technologies */}
+										{exp.technologies && exp.technologies.length > 0 && (
+											<div
+												style={{
+													paddingTop: "1rem",
+													borderTop: "1px solid var(--border)",
+													display: "flex",
+													flexWrap: "wrap",
+													gap: "0.375rem",
+												}}
+											>
+												{exp.technologies.map((tech) => (
+													<span key={tech} className="tag">
+														{tech}
+													</span>
+												))}
+											</div>
+										)}
+									</div>
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+	);
 };
 
 export default ExperienceSection;

@@ -2,10 +2,13 @@
 export interface Project {
   id: string;
   title: string;
-  category: 'Industrial' | 'College';
+  category?: string;
   description: string;
   tags: string[];
+  logoUrl?: string;
   link?: string;
+  liveUrl?: string;
+  githubUrl?: string;
 }
 
 export interface Experience {
@@ -14,6 +17,7 @@ export interface Experience {
   company: string;
   duration: string;
   responsibilities: string[];
+  technologies?: string[];
 }
 
 export interface SkillCategory {
