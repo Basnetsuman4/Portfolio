@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="16" fill="#0b0f17" />
+  <rect x="3" y="3" width="58" height="58" rx="13" fill="none" stroke="#2dd4bf" stroke-width="2" opacity="0.4" />
+  <text x="14" y="44" font-family="'Space Grotesk', 'Inter', system-ui, sans-serif" font-weight="800" font-size="28" fill="#f5f5f5" letter-spacing="-1">SB</text>
+  <circle cx="50" cy="41" r="3.5" fill="#2dd4bf" />
+</svg>
